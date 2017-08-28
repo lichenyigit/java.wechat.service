@@ -1,5 +1,7 @@
 package java.wechat.service.util;
 
+import com.sun.tracing.dtrace.ArgsAttributes;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -135,5 +137,5 @@ public class CommonUtils {
 			throw new ReceiveWXMsgFailedException();
 		}
 	}
-	
+
 }

@@ -77,18 +77,63 @@ public class WechatService {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * 获取签名
+	 * @param
+	 * @return
+	 * @author lichenyi
+	 * @date 2017-8-28 0028 13:02
+	 */
 	public static String getSignature(String timestamp, String nonce, String encrypt) throws AesException {
 		return SecurityWechatUtil.getSHA1(Dictionary.token, timestamp, nonce, encrypt);
 	}
-	
+
+	/**
+	 * 检验签名
+	 * @param
+	 * @return
+	 * @author lichenyi
+	 * @date 2017-8-28 0028 13:02
+	 */
 	public static boolean checkSignature(String oldSingature, String newSignature){
 		if(oldSingature.equals(oldSingature)){
 			return true;
 		}
 		return false;
 	}
-	
+
+	/**
+	 * 获取设备及用户信息
+	 * 获取设备信息，包括UUID、major、minor，以及距离、openID等信息。
+	 * @param 
+	 * @return 
+	 * @author lichenyi
+	 * @date 2017-8-28 0028 13:03
+	 */
+	public static Map<String, Object> getShakeInfo(){
+		String url = String.format(Dictionary.SHAKE_INFO_URL, getToken(), getTicket());
+		List<Parameter> parameters = new ArrayList<>();
+		return HttpUtils.getDataPOST(url, parameters, 30000);
+	}
+
+	/**
+	 * 获取用户信息
+	 * @param
+	 * @return
+	 * @author lichenyi
+	 * @date 2017-8-28 0028 13:09
+	 */
+	public static Map<String, Object> getUserInfo(){
+		Map<String, Object> shakeInfo = getShakeInfo();
+		Map<String, Object> shakeInfoData = (Map<String, Object>) shakeInfo.get("data");
+		String openid = shakeInfoData.get("openid").toString();
+
+		String url = String.format(Dictionary.USER_INFO_URL, getToken(), openid);
+		List<Parameter> parameters = new ArrayList<>();
+		return HttpUtils.getDataPOST(url, parameters, 30000);
+	}
+
 	public static String getResult(String xmlStr, String openid) throws AesException{
 		String type = XMLUtil.getMsgType(xmlStr);
 		String replyMsg = XMLUtil.sendTextXML(openid, "gh_bd4baec5e8a7", "this is "+type);
